@@ -51,14 +51,6 @@ Widget PageBody(List<SoccerMatch> allmatches) {
                     fontSize: 24.0,
                   ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: allmatches.length,
-                    itemBuilder: (context, index) {
-                      return matchTile(allmatches[index]);
-                    },
-                  ),
-                )
               ],
             ),
           ),
