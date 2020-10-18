@@ -3,29 +3,71 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:Soscore/soccermodel.dart';
 
-class SoccerApi {
+class SoccerMatch {
+  //here we will see the different data
+  //you will find every thing you need in the doc
+  //I'm not going to use every data, just few ones
 
-  final String apiUrl =
-      "https://v3.football.api-sports.io/fixtures?season=2020&league=39";
+  Fixture fixture;
+  Team home;
+  Team away;
+  Goal goal;
+  SoccerMatch(this.fixture, this.home, this.away, this.goal);
 
-  static const headers = {
-    'x-rapidapi-host': "v3.football.api-sports.io",
-    'x-rapidapi-key': "PUT YOUR API KEY HERE OR IT WILL NOT WORK"
-  };
-  Future<List<SoccerMatch>> getAllMatches() async {
-    Response res = await get(apiUrl, headers: headers);
-    var body;
+  factory SoccerMatch.fromJson(Map<String, dynamic> json) {
+    return SoccerMatch(
+        Fixture.fromJson(json['fixture']),
+        Team.fromJson(json['teams']['home']),
+        Team.fromJson(json['teams']['away']),
+        Goal.fromJson(json['goals']));
+  }
+}
 
-    if (res.statusCode == 200) {
-      // this mean that we are connected to the data base
-      body = jsonDecode(res.body);
-      List<dynamic> matchesList = body['response'];
-      print("Api service: ${body}"); // to debug
-      List<SoccerMatch> matches = matchesList
-          .map((dynamic item) => SoccerMatch.fromJson(item))
-          .toList();
+//here we will store the fixture
+class Fixture {
+  int id;
+  String date;
+  Status status;
+  Fixture(this.id, this.date, this.status);
 
-      return matches;
-    }
+  factory Fixture.fromJson(Map<String, dynamic> json) {
+    return Fixture(json['id'], json['date'], Status.fromJson(json['status']));
+  }
+}
+
+//here we will store the Status
+class Status {
+  int elapsedTime;
+  String long;
+  Status(this.elapsedTime, this.long);
+
+  factory Status.fromJson(Map<String, dynamic> json) {
+    return Status(json['elapsed'], json['long']);
+  }
+}
+
+//here we will store the Team data
+class Team {
+  int id;
+  String name;
+  String logoUrl;
+  bool winner;
+  Team(this.id, this.name, this.logoUrl, this.winner);
+
+  factory Team.fromJson(Map<String, dynamic> json) {
+    return Team(json['id'], json['name'], json['logo'], json['winner']);
+  }
+}
+
+//here we will store the Goal data
+class Goal {
+  int home;
+  int away;
+  Goal(this.home, this.away);
+
+  //Now we will create a factory method to copy the data from
+  // the json file
+  factory Goal.fromJson(Map<String, dynamic> json) {
+    return Goal(json['home'], json['away']);
   }
 }
